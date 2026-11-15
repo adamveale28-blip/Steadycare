@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steadycare Timesheets</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <div id="authView" class="screen auth-screen">
+        <div class="auth-card">
+          <div class="brand-block">
+            <div class="brand-mark">S</div>
+            <div>
+              <p class="eyebrow">Steadycare</p>
+              <h1>Staff Portal</h1>
+              <p class="auth-subtitle">A calmer way to manage your shifts.</p>
+            </div>
+          </div>
+
+          <form id="loginForm" class="stack-form">
+            <label>
+              <span>Username</span>
+              <input id="username" name="username" type="text" placeholder="admin" required />
+            </label>
+            <label>
+              <span>Password</span>
+              <input id="password" name="password" type="password" placeholder="••••••••" required />
+            </label>
+            <button class="primary-btn" type="submit">Sign in</button>
+          </form>
+
+          <div class="demo-box">
+            <strong>Demo accounts</strong>
+            <ul>
+              <li><span>Admin</span><code>admin / admin123</code></li>
+              <li><span>Staff</span><code>staff1 / staff123</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="appView" class="screen hidden">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Timesheets</p>
+            <h2 id="welcomeText">Dashboard</h2>
+          </div>
+          <button id="logoutBtn" class="ghost-btn" type="button">Log out</button>
+        </header>
+
+        <nav class="tab-nav" aria-label="Main navigation">
+          <button class="tab-btn active" data-section="dashboard" type="button">Dashboard</button>
+          <button class="tab-btn" data-section="timesheets" type="button">Timesheets</button>
+          <button class="tab-btn" data-section="weekly" type="button">Weekly tracker</button>
+          <button id="usersTab" class="tab-btn admin-only" data-section="users" type="button">Users</button>
+        </nav>
+
+        <main class="main-panel">
+          <section id="dashboard" class="page-section active">
+            <div id="dashboardCards" class="summary-grid"></div>
+            <div class="content-card">
+              <div class="card-header">
+                <h3>Recent time logs</h3>
+              </div>
+              <div id="recentLogs" class="list-stack"></div>
+            </div>
+          </section>
+
+          <section id="timesheets" class="page-section">
+            <div class="content-card form-card">
+              <div class="card-header">
+                <h3 id="timesheetFormTitle">Add time log</h3>
+              </div>
+              <form id="timesheetForm" class="timesheet-form">
+                <div class="form-grid">
+                  <label>
+                    <span>Date</span>
+                    <input id="sheetDate" name="date" type="date" required />
+                  </label>
+
+                  <label id="workerSelectWrap" class="admin-only">
+                    <span>Staff member</span>
+                    <select id="sheetWorker" name="userId"></select>
+                  </label>
+
+                  <label>
+                    <span>Shift type</span>
+                    <select id="sheetShiftType" name="shiftType">
+                      <option value="Day">Day</option>
+                      <option value="Night">Night</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Clock in</span>
+                    <input id="sheetClockIn" name="clockIn" type="time" required />
+                  </label>
+
+                  <label>
+                    <span>Clock out</span>
+                    <input id="sheetClockOut" name="clockOut" type="time" required />
+                  </label>
+
+                  <label>
+                    <span>Break (mins)</span>
+                    <input id="sheetBreak" name="breakMinutes" type="number" min="0" value="0" required />
+                  </label>
+
+                  <label class="full-width">
+                    <span>Notes</span>
+                    <textarea id="sheetNotes" name="notes" rows="3" placeholder="Client notes, handover details..."></textarea>
+                  </label>
+
+                  <label>
+                    <span>Status</span>
+                    <select id="sheetStatus" name="status">
+                      <option value="open">Open</option>
+                      <option value="worked">Worked</option>
+                      <option value="submitted">Submitted</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="action-row">
+                  <button class="primary-btn" type="submit">Save time log</button>
+                  <button id="cancelEditBtn" class="ghost-btn hidden" type="button">Cancel edit</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="content-card table-card">
+              <div class="card-header">
+                <h3>Time log list</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Staff</th>
+                      <th>Date</th>
+                      <th>Shift</th>
+                      <th>Hours</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="timesheetTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section id="weekly" class="page-section">
+            <div class="content-card">
+              <div class="card-header row-header">
+                <h3>Weekly workload</h3>
+                <div class="week-controls">
+                  <button id="weekPrev" class="ghost-btn" type="button">Previous</button>
+                  <input id="weekPicker" type="week" />
+                  <button id="weekNext" class="ghost-btn" type="button">Next</button>
+                </div>
+              </div>
+              <div id="weeklyTracker" class="tracker-list"></div>
+            </div>
+          </section>
+
+          <section id="users" class="page-section admin-only">
+            <div class="content-card">
+              <div class="card-header">
+                <h3>User accounts</h3>
+              </div>
+
+              <form id="userForm" class="user-form">
+                <div class="form-grid">
+                  <label>
+                    <span>Full name</span>
+                    <input id="userName" name="name" type="text" placeholder="Jane Smith" required />
+                  </label>
+                  <label>
+                    <span>Username</span>
+                    <input id="userUsername" name="username" type="text" placeholder="janesmith" required />
+                  </label>
+                  <label>
+                    <span>Password</span>
+                    <input id="userPassword" name="password" type="password" placeholder="••••••••" required />
+                  </label>
+                  <label>
+                    <span>Access level</span>
+                    <select id="userRole" name="role">
+                      <option value="staff">Staff</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="action-row">
+                  <button class="primary-btn" type="submit">Add user</button>
+                </div>
+              </form>
+
+              <div id="userList" class="user-list"></div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div id="toast" class="toast hidden" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
